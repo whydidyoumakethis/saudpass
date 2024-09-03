@@ -38,7 +38,7 @@ struct Message
       return message;
     }
     std::string trimmed = data.substr(3);
-    size_t delim = data.find('|');
+    size_t delim = trimmed.find('|');
     message.user = String(trimmed.substr(0, delim).c_str());
     message.msg = String(trimmed.substr(delim + 1).c_str());
     return message;
@@ -101,10 +101,20 @@ void HandleSerialPort(NimBLECharacteristic *pCharacteristic)
       }
     }else if(rec == "post"){
       if(pCharacteristic != nullptr){
+        Serial.println("from esp:");
         Serial.println("Characteristic is not null");
         String raw = Serial.readStringUntil('\n');
+        Serial.println("from esp:");
+        Serial.println(raw);
         Message msg = Message::deserialize(raw.c_str());
+        Serial.println("from esp:");
+        Serial.println("User: " + msg.user);
+        Serial.println("Message: " + msg.msg);
         std::string sendmsg = msg.serialize();
+        Serial.println("from esp:");
+        Serial.println(sendmsg.c_str());
+
+
         pCharacteristic->setValue(sendmsg);
 
       }
